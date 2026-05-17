@@ -6,11 +6,11 @@ class Student(models.Model):
     email  = models.EmailField()
     age = models.IntegerField()
 
-def __str__(self):
-    return self.name
+    def __str__(self):
+        return self.name
 
-def get_absolute_url(self):
-    return reverse('student_detail', kwarg={'pk': self.pk})
+    def get_absolute_url(self):
+        return reverse('student_detail', kwargs={'pk': self.pk})
 
 
 # Create your models here.

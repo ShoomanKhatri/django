@@ -1,0 +1,78 @@
+{% extends 'students/base.html' %}
+
+{% block title %}Confirm Deletion - {{ student.name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .delete-container {
+        max-width: 500px;
+        margin: 4rem auto;
+        text-align: center;
+    }
+
+    .warning-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+        animation: pulse 2s infinite;
+        display: inline-block;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.08); }
+        100% { transform: scale(1); }
+    }
+
+    .delete-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.75rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+    }
+
+    .delete-desc {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 2.5rem;
+        background: rgba(239, 68, 68, 0.05);
+        border: 1px dashed rgba(239, 68, 68, 0.25);
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-md);
+    }
+
+    .delete-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .delete-actions form {
+        flex: 1;
+        max-width: 180px;
+    }
+
+    .delete-actions .btn {
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="glass-card delete-container">
+    <span class="warning-icon">⚠️</span>
+    <h2 class="delete-title">Confirm Deletion</h2>
+    <p class="delete-desc">
+        Are you sure you want to permanently delete the profile of <strong>{{ student.name }}</strong>? This action is irreversible and all data associated with this student will be lost.
+    </p>
+
+    <div class="delete-actions">
+        <a href="{% url 'student_detail' student.pk %}" class="btn btn-secondary" style="flex: 1; max-width: 180px;">Cancel</a>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">🗑️ Yes, Delete</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

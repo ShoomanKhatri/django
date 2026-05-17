@@ -1,0 +1,221 @@
+{% extends 'students/base.html' %}
+
+{% block title %}Dashboard - StudentManager{% endblock %}
+
+{% block extra_head %}
+<style>
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .stats-bar {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-color);
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-md);
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        min-width: 150px;
+    }
+
+    .stat-val {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .student-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .student-card {
+        background: rgba(25, 35, 59, 0.4);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1.75rem;
+        transition: var(--transition-smooth);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .student-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--accent-gradient);
+        opacity: 0;
+        transition: var(--transition-smooth);
+    }
+
+    .student-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(99, 102, 241, 0.3);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .student-card:hover::before {
+        opacity: 1;
+    }
+
+    .card-top {
+        margin-bottom: 1.5rem;
+    }
+
+    .student-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--accent-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+        font-family: 'Outfit', sans-serif;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    .student-name {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .student-info {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .student-info span.icon {
+        color: var(--accent-primary);
+        font-size: 1rem;
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 0.75rem;
+        border-top: 1px solid var(--border-color);
+        padding-top: 1.25rem;
+        margin-top: 1rem;
+    }
+
+    .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        border-radius: 8px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: rgba(25, 35, 59, 0.2);
+        border: 1px dashed var(--border-color);
+        border-radius: var(--radius-lg);
+    }
+
+    .empty-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-desc {
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div>
+        <h1 class="heading-1">Students Directory</h1>
+        <p class="subtitle">Manage, view, and analyze all active students in the system.</p>
+    </div>
+</div>
+
+<div class="stats-bar">
+    <div class="stat-card">
+        <span class="stat-val">{{ students|length }}</span>
+        <span class="stat-label">Total Registered</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-val">
+            {% if students %}
+                {% widthratio students|length 1 1 %}
+            {% else %}
+                0
+            {% endif %}
+        </span>
+        <span class="stat-label">Active Database Records</span>
+    </div>
+</div>
+
+{% if students %}
+<div class="student-grid">
+    {% for student in students %}
+    <div class="student-card">
+        <div class="card-top">
+            <div class="student-avatar">
+                {{ student.name|slice:":1"|upper }}
+            </div>
+            <h3 class="student-name">{{ student.name }}</h3>
+            <div class="student-info">
+                <span class="icon">📧</span>
+                <span>{{ student.email }}</span>
+            </div>
+            <div class="student-info">
+                <span class="icon">🎂</span>
+                <span>{{ student.age }} years old</span>
+            </div>
+        </div>
+        
+        <div class="card-actions">
+            <a href="{% url 'student_detail' student.pk %}" class="btn btn-secondary btn-sm" style="flex: 1;">👁️ View</a>
+            <a href="{% url 'student_update' student.pk %}" class="btn btn-secondary btn-sm" style="flex: 1;">✏️ Edit</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+    <h3 class="empty-title">No Students Registered</h3>
+    <p class="empty-desc">Get started by creating your very first student entry in the database.</p>
+    <a href="{% url 'student_create' %}" class="btn btn-primary">⚡ Add Student Now</a>
+</div>
+{% endif %}
+{% endblock %}
